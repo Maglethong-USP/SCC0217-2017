@@ -9,9 +9,19 @@ import java.util.regex.Pattern;
  */
 public enum TokenType {
     // To test expressions use: https://regex101.com/
-    ID ("^(\\s*)([a-zA-Z])([a-zA-Z0-9_]*)"),
-    SEMICOLOM ("^\\s;");
+    ID ("^([a-zA-Z])([a-zA-Z0-9_]*)"),
+    REAL ("^(\\+|-)?[0-9]+\\.[0-9]+"), 
+    INTEGER ("^(\\+|-)?[1-9][0-9]*"), 
+    SEMICOLOM ("^;"),
+    BRAQUETS_OPEN ("^\\{"),
+    BRAQUETS_CLOSE ("^\\}"),
+    PARENTHESES_OPEN ("^\\("),
+    PARENTHESES_CLOSE ("^\\)"),
+    COLOM ("^:"),
+    PERIOD ("^\\."),
+    COMMA ("^,");
     // TODO -> Other rules
+    // TODO -> Reserved words?
 
     private final Pattern pattern;
 

@@ -13,9 +13,6 @@ public class Token {
     
     
     
-    // Create base for Token and Error
-    //   Create factory to Generate Token/Error base from the text
-    
     public Token(int line, int column, TokenType type, String content) {
         this.line = line;
         this.column = column;

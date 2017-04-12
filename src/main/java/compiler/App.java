@@ -3,6 +3,7 @@ package compiler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 
@@ -19,26 +20,37 @@ public class App {
         List<Token> tokens = new ArrayList<Token>();
         List<Error> errors = new ArrayList<Error>();
         
+        Pattern spacePattern = Pattern.compile("^(\\s)*");
+        
         int lineNum = 0;
         int columnNum = 0;
         while (line.length() > 0) {
+            
             boolean found = false;
             
+            // Remove whitespaces
+            Matcher m = spacePattern.matcher(line);
+            if (m.find()) {
+                line = line.substring(m.group().length());
+                columnNum += m.group().length();
+            }
+            
+            // Try matching all possible tokens
             for (TokenType type : TokenType.values()) {
-                Matcher m = type.getPattern().matcher(line);
+                m = type.getPattern().matcher(line);
                 if (m.find()) {
-                    String content = m.group().replaceAll("\\s", "");
-                    tokens.add(new Token(lineNum, columnNum + m.start() + m.group().length() - content.length(), type, content)); // TODO -> check for reserved words
-                    line = line.substring(m.end(), line.length());
+                    tokens.add(new Token(lineNum, columnNum + m.start() + m.group().length() - m.group().length(), type, m.group())); // TODO -> check for reserved words
+                    line = line.substring(m.end());
                     columnNum += m.end();
                     found = true;
                     break;
                 }
             }
             
+            // No token found -> error
             if (!found) {
                 errors.add(new Error(lineNum, columnNum++, /*type,*/ "unexpected character '" + line.charAt(0) + "'"));
-                line = line.substring(1, line.length());
+                line = line.substring(1);
             }
         }
         
