@@ -49,6 +49,8 @@ public class AppTest {
             { "write", new String[] { "<RESERVED_WRITE, write>" } },
             { "while", new String[] { "<RESERVED_WHILE, while>" } },
             { "do", new String[] { "<RESERVED_DO, do>" } },
+            { "for", new String[] { "<RESERVED_FOR, for>" } },
+            { "to", new String[] { "<RESERVED_TO, to>" } },
             // Test sequence 2: Recognizing Identifiers and Numbers
             { "a", new String[] { "<ID, a>" } },
             { "asd123", new String[] { "<ID, asd123>" } },
@@ -67,7 +69,7 @@ public class AppTest {
             { ";", new String[] { "<SEMICOLOM, ;>" } },
             { ":", new String[] { "<COLOM, :>" } },
             { ",", new String[] { "<COMMA, ,>" } },
-            { ":=", new String[] { "<ATRIBUTION, :=>" } },
+            { ":=", new String[] { "<ATTRIBUTION, :=>" } },
             { "=", new String[] { "<EQUAL, =>" } },
             { "<>", new String[] { "<DIFFERENT, <>>" } },
             { ">=", new String[] { "<GRATER_EQUAL, >=>" } },
@@ -82,6 +84,30 @@ public class AppTest {
             { "\t;  ", new String[] { "<SEMICOLOM, ;>" } },
             { "\n  \t ;  ", new String[] { "<SEMICOLOM, ;>" } },
             { "  ; \n\t ; ", new String[] { "<SEMICOLOM, ;>", "<SEMICOLOM, ;>" } },
+            // Test 5: Comments
+            { "  {}     ", new String[] {} },
+            { "  {}   {} \t  {}   {}   ", new String[] {} },
+            // Test 6: For loop
+            { 
+                // Program Line
+                "for i := 1 to 10 do write(i);",
+                // Expected Tokens
+                new String[] {
+                       "<RESERVED_FOR, for>",
+                       "<ID, i>",
+                       "<ATTRIBUTION, :=>",
+                       "<INTEGER, 1>",
+                       "<RESERVED_TO, to>",
+                       "<INTEGER, 10>",
+                       "<RESERVED_DO, do>",
+                       "<RESERVED_WRITE, write>",
+                       "<PARENTHESES_OPEN, (>",
+                       "<ID, i>",
+                       "<PARENTHESES_CLOSE, )>",
+                       "<SEMICOLOM, ;>"
+                }
+            },
+            // Test 7: Simple program with error
             { 
                 // Program Line
                 "program lalg;      {teste}     var a: integer; begin read(a, @, 1); end.",
@@ -90,9 +116,6 @@ public class AppTest {
                        "<RESERVED_PROGRAM, program>",
                        "<ID, lalg>",
                        "<SEMICOLOM, ;>",
-                       "<BRAQUETS_OPEN, {>",
-                       "<ID, teste>",
-                       "<BRAQUETS_CLOSE, }>",
                        "<RESERVED_VAR, var>",
                        "<ID, a>",
                        "<COLOM, :>",
@@ -111,7 +134,7 @@ public class AppTest {
                        "<PERIOD, .>", 
                        // Expected Errors
                        "Error: unexpected character '@' at line 0 column 61"
-                }, 
+                }
             }
           };
         return Arrays.asList(data);

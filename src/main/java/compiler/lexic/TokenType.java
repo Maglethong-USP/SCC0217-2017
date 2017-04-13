@@ -20,7 +20,7 @@ public enum TokenType {
     BRAQUETS_CLOSE ("\\}"),
     PARENTHESES_OPEN ("\\("),
     PARENTHESES_CLOSE ("\\)"),
-    ATRIBUTION (":="),
+    ATTRIBUTION (":="),
     COLOM (":"),
     PERIOD ("\\."),
     COMMA (","),
@@ -49,7 +49,9 @@ public enum TokenType {
     RESERVED_ELSE (null),
     RESERVED_WRITE (null),
     RESERVED_WHILE (null),
-    RESERVED_DO (null);
+    RESERVED_DO (null),
+    RESERVED_FOR (null),
+    RESERVED_TO (null);
     
     
     // Calculate pattern once per value

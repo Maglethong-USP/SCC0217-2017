@@ -30,7 +30,7 @@ public final class LexicalAnalyzer {
     
     
     
-    private static final Pattern spacePattern = Pattern.compile("\\A(\\s)*");
+    private static final Pattern spacePattern = Pattern.compile("\\A" + "((\\s)(\\{.*?\\})?)*");
     
     private int lineNum = 0;
     private int columnNum = 0;
