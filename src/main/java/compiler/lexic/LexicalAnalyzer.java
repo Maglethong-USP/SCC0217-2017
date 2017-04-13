@@ -13,7 +13,7 @@ import compiler.error.ErrorType;
 /**
  * Author: Maglethong Spirr
  */
-public final class LexisAnalizer {
+public final class LexicalAnalyzer {
     
     public final class LineAnalysis {
         private final List<Token> tokens;

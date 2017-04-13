@@ -2,8 +2,8 @@ package compiler;
 
 import java.util.Scanner;
 
-import compiler.lexic.LexisAnalizer;
-import compiler.lexic.LexisAnalizer.LineAnalysis;
+import compiler.lexic.LexicalAnalyzer;
+import compiler.lexic.LexicalAnalyzer.LineAnalysis;
 import compiler.lexic.Token;
 import compiler.error.Error;
 
@@ -16,7 +16,7 @@ public class App {
     
     public static void main( String[] args ) {
         Scanner scanner = new Scanner(System.in);
-        LexisAnalizer analyser = new LexisAnalizer();
+        LexicalAnalyzer analyser = new LexicalAnalyzer();
         
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();

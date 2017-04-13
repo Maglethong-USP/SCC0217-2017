@@ -1,21 +1,14 @@
 package compiler.lexic;
 
-import java.util.HashMap;
-
 
 
 /**
  * Author: Maglethong Spirr
+ * 
+ * This class is just a token container while we only have a lexical analysis. 
+ * It will be removed in future versions.
  */
 public final class Token {
-    
-    private static final HashMap<String, TokenType> reservedWords = new HashMap<String, TokenType>();
-    
-    static {
-        for (TokenType t : TokenType.reservedValues()) {
-            reservedWords.put(t.name().replace("RESERVED_", "").toLowerCase(), t);
-        }
-    }
     
     private final int line;
     private final int column;
@@ -27,7 +20,7 @@ public final class Token {
     public Token(int line, int column, TokenType type, String content) {
         this.line = line;
         this.column = column;
-        this.type = type == TokenType.ID ? reservedWords.getOrDefault(content, TokenType.ID) : type;
+        this.type = type == TokenType.ID ? TokenType.getReservedWordOrID(content) : type;
         this.content = content;
     }
 

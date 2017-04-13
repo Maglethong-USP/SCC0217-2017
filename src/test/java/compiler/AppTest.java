@@ -1,12 +1,14 @@
 package compiler;
 
-import compiler.lexic.LexisAnalizer;
-import compiler.lexic.LexisAnalizer.LineAnalysis;
+import compiler.lexic.LexicalAnalyzer;
+import compiler.lexic.LexicalAnalyzer.LineAnalysis;
 
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,9 +55,9 @@ public class AppTest {
             { "a_as_123a", new String[] { "<ID, a_as_123a>" } },
             { "_a", new String[] { "<ID, a>", "Error: unexpected character '_' at line 0 column 0" } },
             { "123", new String[] { "<INTEGER, 123>" } },
-            { "+123", new String[] { "<INTEGER, +123>" } },
-            { "-123", new String[] { "<INTEGER, -123>" } },
-            { "123a", new String[] { "<INTEGER, -123>", "<ID, a>" } },
+            { "+234", new String[] { "<INTEGER, +234>" } },
+            { "-345", new String[] { "<INTEGER, -345>" } },
+            { "456a", new String[] { "<INTEGER, 456>", "<ID, a>" } },
             { "123.3", new String[] { "<REAL, 123.3>" } },
             { "+123.3", new String[] { "<REAL, +123.3>" } },
             { "-123.3", new String[] { "<REAL, -123.3>" } },
@@ -74,13 +76,12 @@ public class AppTest {
             { "<", new String[] { "<LESS, <>" } },
             { "+", new String[] { "<ADD, +>" } },
             { "-", new String[] { "<SUBTRACT, ->" } },
-            { "*", new String[] { "<MULTIPLY, *>" } },
-            { "/", new String[] { "<DEVIDE, />" } },
+            { "(", new String[] { "<PARENTHESES_OPEN, (>" } },
+            { ")", new String[] { "<PARENTHESES_CLOSE, )>" } },
             // Test sequence 4: Whitespace swallow
             { "\t;  ", new String[] { "<SEMICOLOM, ;>" } },
             { "\n  \t ;  ", new String[] { "<SEMICOLOM, ;>" } },
             { "  ; \n\t ; ", new String[] { "<SEMICOLOM, ;>", "<SEMICOLOM, ;>" } },
-            // Test 5: Simple program with error
             { 
                 // Program Line
                 "program lalg;      {teste}     var a: integer; begin read(a, @, 1); end.",
@@ -116,20 +117,30 @@ public class AppTest {
         return Arrays.asList(data);
     }
     
-    @Test
+    
+    
+    @Test(timeout=1500)
     public void parsingProgramShouldReturnItsTokensAndErrors() {
         
-        LexisAnalizer analyser = new LexisAnalizer();
+	LexicalAnalyzer analyser = new LexicalAnalyzer();
         
         LineAnalysis analysis = analyser.getElements(line);
 
-        int j = 0;
-        for (int i = 0; i < analysis.getTokens().size() && i < expectedElements.length; i++, j++) {
-            assertEquals("Token " + i + ": ", expectedElements[i], analysis.getTokens().get(i).toString());
+        List<String> got = analysis.getTokens().stream().map(t -> t.toString()).collect(Collectors.toList());
+        got.addAll(analysis.getErrors().stream().map(e -> e.toString()).collect(Collectors.toList()));
+
+        for (int i = 0; i < Math.max(analysis.getTokens().size(), expectedElements.length) ; i++) {
+            assertEquals("Token/Error " + i + ": ", 
+        	    getOrElse(expectedElements, i, ""), 
+        	    getOrElse(got, i, ""));
         }
-        for (int i = 0; i < analysis.getTokens().size() && i +j < expectedElements.length; i++, j++) {
-            assertEquals("Error " + i + ": ", expectedElements[i], analysis.getTokens().get(i).toString());
-        }
-        assertEquals("Number of Elements Found: ", expectedElements.length, analysis.getTokens().size() + analysis.getErrors().size());
+    }
+    
+    private String getOrElse(String[] arr, int index, String alternative) {
+	return arr.length > index ? arr[index] : alternative;
+    }
+    
+    private String getOrElse(List<String> list, int index, String alternative) {
+	return list.size() > index ? list.get(index): alternative;
     }
 }
