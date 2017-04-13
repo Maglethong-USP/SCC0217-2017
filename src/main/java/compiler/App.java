@@ -2,6 +2,11 @@ package compiler;
 
 import java.util.Scanner;
 
+import compiler.lexic.LexisAnalizer;
+import compiler.lexic.LexisAnalizer.LineAnalysis;
+import compiler.lexic.Token;
+import compiler.error.Error;
+
 
 
 /**
@@ -11,11 +16,19 @@ public class App {
     
     public static void main( String[] args ) {
         Scanner scanner = new Scanner(System.in);
+        LexisAnalizer analyser = new LexisAnalizer();
         
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
+
+            LineAnalysis analysis = analyser.getElements(line);
             
-            System.out.println(line);
+            for (Token t : analysis.getTokens()) {
+                System.out.println(t.toString());
+            }
+            for (Error e : analysis.getErrors()) {
+                System.out.println(e.toString());
+            }
             
             if (line.startsWith("\\q")) {
                 break;
