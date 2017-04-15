@@ -1,6 +1,6 @@
 package compiler.lexic;
 
-
+import compiler.base.IElement;
 
 /**
  * Author: Maglethong Spirr
@@ -8,7 +8,7 @@ package compiler.lexic;
  * This class is just a token container while we only have a lexical analysis. 
  * It will be removed in future versions.
  */
-public final class Token {
+public final class Token implements IElement {
     
     private final int line;
     private final int column;

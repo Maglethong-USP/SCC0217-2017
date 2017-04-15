@@ -2,9 +2,11 @@ package compiler.lexic;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import compiler.base.IElement;
 import compiler.error.Error;
 import compiler.error.ErrorType;
 
@@ -14,33 +16,40 @@ import compiler.error.ErrorType;
  * Author: Maglethong Spirr
  */
 public final class LexicalAnalyzer {
-    
-    public final class LineAnalysis {
-        private final List<Token> tokens;
-        private final List<Error> errors;
-        
-        public LineAnalysis(List<Token> tokens, List<Error> errors) {
-            this.tokens = tokens;
-            this.errors = errors;
-        }
-
-        public List<Token> getTokens() { return tokens; }
-        public List<Error> getErrors() { return errors; }
-    }
-    
-    
-    
     private static final Pattern spacePattern = Pattern.compile("\\A" + "((\\s)(\\{.*?\\})?)*");
     
-    private int lineNum = 0;
+    private int lineNum = -1;
     private int columnNum = 0;
     
+    private final Scanner scanner;
     
+    private List<IElement> buffer = new ArrayList<IElement>();
     
-    public LineAnalysis getElements(String line) {
+    public LexicalAnalyzer(Scanner scanner) {
+	this.scanner = scanner;
+    }
 
-        List<Token> tokens = new ArrayList<Token>();
-        List<Error> errors = new ArrayList<Error>();
+    public boolean hasNext() {
+	while (buffer.size() == 0 && scanner.hasNextLine()) {
+	    lineNum++;
+	    columnNum = 0;
+	    buffer = getLineElements(scanner.nextLine());
+	}
+
+	return buffer.size() > 0;
+    }
+    
+    public IElement next() {
+	if (!hasNext()) {
+	    return null;
+	}
+	
+	return buffer.remove(0);
+    }
+    
+    private List<IElement> getLineElements(String line) {
+
+        List<IElement> elements = new ArrayList<IElement>();
         
         while (line.length() > 0) {
             
@@ -59,7 +68,7 @@ public final class LexicalAnalyzer {
             for (TokenType type : TokenType.patternValues()) {
                 m = type.getPattern().matcher(line);
                 if (m.find()) {
-                    tokens.add(new Token(lineNum, columnNum + m.start() + m.group().length() - m.group().length(), type, m.group()));
+                    elements.add(new Token(lineNum, columnNum + m.start() + m.group().length() - m.group().length(), type, m.group()));
                     line = line.substring(m.end());
                     columnNum += m.end();
                     found = true;
@@ -69,11 +78,11 @@ public final class LexicalAnalyzer {
             
             // No token found -> error
             if (!found) {
-                errors.add(new Error(lineNum, columnNum++, ErrorType.LEXIC, "unexpected character '" + line.charAt(0) + "'"));
+        	elements.add(new Error(lineNum, columnNum++, ErrorType.LEXIC, "unexpected character '" + line.charAt(0) + "'"));
                 line = line.substring(1);
             }
         }
         
-        return new LineAnalysis(tokens, errors);
+        return elements;
     }
 }

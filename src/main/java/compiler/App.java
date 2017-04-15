@@ -3,9 +3,6 @@ package compiler;
 import java.util.Scanner;
 
 import compiler.lexic.LexicalAnalyzer;
-import compiler.lexic.LexicalAnalyzer.LineAnalysis;
-import compiler.lexic.Token;
-import compiler.error.Error;
 
 
 
@@ -16,22 +13,12 @@ public class App {
     
     public static void main( String[] args ) {
         Scanner scanner = new Scanner(System.in);
-        LexicalAnalyzer analyser = new LexicalAnalyzer();
+        LexicalAnalyzer analyser = new LexicalAnalyzer(scanner);
         
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-
-            LineAnalysis analysis = analyser.getElements(line);
-            
-            for (Token t : analysis.getTokens()) {
-                System.out.println(t.toString());
-            }
-            for (Error e : analysis.getErrors()) {
-                System.out.println(e.toString());
-            }
-            
-            if (line.startsWith("\\q")) {
-                break;
+        while (analyser.hasNext()) {
+            System.out.println(analyser.next().toString());
+            if (scanner.hasNext("\\\\q")) {
+        	break;
             }
         }
         

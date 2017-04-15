@@ -1,14 +1,14 @@
 package compiler;
 
 import compiler.lexic.LexicalAnalyzer;
-import compiler.lexic.LexicalAnalyzer.LineAnalysis;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Scanner;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +25,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class AppTest {
 
     @Parameter(0)
-    public String line;
+    public String source;
     @Parameter(1)
     public String[] expectedElements;
     
@@ -55,7 +55,7 @@ public class AppTest {
             { "a", new String[] { "<ID, a>" } },
             { "asd123", new String[] { "<ID, asd123>" } },
             { "a_as_123a", new String[] { "<ID, a_as_123a>" } },
-            { "_a", new String[] { "<ID, a>", "Error: unexpected character '_' at line 0 column 0" } },
+            { "_a", new String[] { "Error: unexpected character '_' at line 0 column 0", "<ID, a>" } },
             { "123", new String[] { "<INTEGER, 123>" } },
             { "+234", new String[] { "<INTEGER, +234>" } },
             { "-345", new String[] { "<INTEGER, -345>" } },
@@ -126,14 +126,24 @@ public class AppTest {
                        "<PARENTHESES_OPEN, (>",
                        "<ID, a>",
                        "<COMMA, ,>",
+                       "Error: unexpected character '@' at line 0 column 61",
                        "<COMMA, ,>",
                        "<INTEGER, 1>",
                        "<PARENTHESES_CLOSE, )>",
                        "<SEMICOLOM, ;>",
                        "<RESERVED_END, end>",
-                       "<PERIOD, .>", 
-                       // Expected Errors
-                       "Error: unexpected character '@' at line 0 column 61"
+                       "<PERIOD, .>"
+                }
+            },
+            // Test 8: Line and Column in errors
+            { 
+                // Program Line
+                "   {}  #   \n  {}     @  \n  {}  { }   % ",
+                // Expected Tokens
+                new String[] {
+                       "Error: unexpected character '#' at line 0 column 7",
+                       "Error: unexpected character '@' at line 1 column 9",
+                       "Error: unexpected character '%' at line 2 column 12"
                 }
             }
           };
@@ -145,14 +155,14 @@ public class AppTest {
     @Test(timeout=1500)
     public void parsingProgramShouldReturnItsTokensAndErrors() {
         
-	LexicalAnalyzer analyser = new LexicalAnalyzer();
-        
-        LineAnalysis analysis = analyser.getElements(line);
+	LexicalAnalyzer analyser = new LexicalAnalyzer(new Scanner(source));
 
-        List<String> got = analysis.getTokens().stream().map(t -> t.toString()).collect(Collectors.toList());
-        got.addAll(analysis.getErrors().stream().map(e -> e.toString()).collect(Collectors.toList()));
+        List<String> got = new ArrayList<String>();
+        while (analyser.hasNext()) {
+            got.add(analyser.next().toString());
+        }
 
-        for (int i = 0; i < Math.max(analysis.getTokens().size(), expectedElements.length) ; i++) {
+        for (int i = 0; i < Math.max(got.size(), expectedElements.length) ; i++) {
             assertEquals("Token/Error " + i + ": ", 
         	    getOrElse(expectedElements, i, ""), 
         	    getOrElse(got, i, ""));
