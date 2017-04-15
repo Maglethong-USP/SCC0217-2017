@@ -10,4 +10,3 @@ public interface IElement {
     public int getColumn();
     public String getContent();
 }
-

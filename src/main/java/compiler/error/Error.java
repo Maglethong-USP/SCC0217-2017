@@ -2,6 +2,8 @@ package compiler.error;
 
 import compiler.base.IElement;
 
+
+
 /**
  * Author: Maglethong Spirr
  */
