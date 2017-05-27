@@ -16,9 +16,10 @@ public class App {
         LexicalAnalyzer analyser = new LexicalAnalyzer(scanner);
 
         while (analyser.hasNext()) {
-            System.out.println(analyser.next().toString());
-            if (scanner.hasNext("\\\\q")) {
-                break;
+            if (analyser.hasError()) {
+                System.out.println(analyser.nextError().toString());
+            } else {
+                System.out.println(analyser.next().toString());
             }
         }
 

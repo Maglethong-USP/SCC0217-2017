@@ -1,15 +1,16 @@
 package compiler.lexic;
 
+import compiler.syntatic.VocabularyElement;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
 
-
 /**
  * Author: Maglethong Spirr
  */
-public enum TokenType {
+public enum TokenType implements VocabularyElement {
     // To test expressions use: https://regex101.com/
     ID("([a-zA-Z])([a-zA-Z0-9_]*)"),
     REAL("(\\+|-)?[0-9]+\\.[0-9]+"),
