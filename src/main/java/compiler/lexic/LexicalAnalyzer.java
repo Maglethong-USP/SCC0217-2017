@@ -49,7 +49,7 @@ public final class LexicalAnalyzer {
     }
 
     /**
-     * Retrieve next Token
+     * Retrieve next Token and consumes it
      *
      * @return The next token from input
      */
@@ -59,6 +59,19 @@ public final class LexicalAnalyzer {
         }
 
         return tokenBuffer.remove(0);
+    }
+
+    /**
+     * Retrieve next toke without consuming it
+     *
+     * @return The next toke from input
+     */
+    public Token peak() {
+        if (!hasNext()) {
+            throw new NullPointerException("Trying to read next token from end of file");
+        }
+
+        return tokenBuffer.get(0);
     }
 
     /**
@@ -120,7 +133,7 @@ public final class LexicalAnalyzer {
 
             // No token found -> error
             if (!found) {
-                errorBuffer.add(new Error(lineNum, columnNum++, ErrorType.LEXIC,
+                errorBuffer.add(new Error(lineNum, columnNum++, ErrorType.LEXIS,
                         "unexpected character '" + line.charAt(0) + "'"));
                 line = line.substring(1);
             }
