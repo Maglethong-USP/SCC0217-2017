@@ -24,6 +24,21 @@ public final class LexicalAnalyzer {
     private List<Token> tokenBuffer = new ArrayList<>();
     private List<Error> errorBuffer = new ArrayList<>();
 
+
+    /**
+     * Getter
+     *
+     * @return The last analyzed line number
+     */
+    public int getLine() { return lineNum; }
+
+    /**
+     * Getter
+     *
+     * @return The last analyzed column number
+     */
+    public int getColumn() { return columnNum; }
+
     /**
      * Constructor
      *
@@ -102,6 +117,11 @@ public final class LexicalAnalyzer {
         return errorBuffer.remove(0);
     }
 
+    /**
+     * Analyze a line and store its errors and tokens in buffers
+     *
+     * @param line The line string to analyze
+     */
     private void analyzeLine(String line) {
 
         while (line.length() > 0) {
