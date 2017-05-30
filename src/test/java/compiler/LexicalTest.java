@@ -57,7 +57,7 @@ public class LexicalTest {
                 {"123.", new String[]{"<INTEGER, 123>", "<PERIOD, .>"}},
                 {".3", new String[]{"<PERIOD, .>", "<INTEGER, 3>"}},
                 // Test sequence 3: Other symbols
-                {";", new String[]{"<SEMICOLOM, ;>"}}, {":", new String[]{"<COLOM, :>"}},
+                {";", new String[]{"<SEMICOLON, ;>"}}, {":", new String[]{"<COLON, :>"}},
                 {",", new String[]{"<COMMA, ,>"}}, {":=", new String[]{"<ATTRIBUTION, :=>"}},
                 {"=", new String[]{"<EQUAL, =>"}}, {"<>", new String[]{"<DIFFERENT, <>>"}},
                 {">=", new String[]{"<GRATER_EQUAL, >=>"}}, {"<=", new String[]{"<LESS_EQUAL, <=>"}},
@@ -65,8 +65,8 @@ public class LexicalTest {
                 {"+", new String[]{"<ADD, +>"}}, {"-", new String[]{"<SUBTRACT, ->"}},
                 {"(", new String[]{"<PARENTHESES_OPEN, (>"}}, {")", new String[]{"<PARENTHESES_CLOSE, )>"}},
                 // Test sequence 4: Whitespace swallow
-                {"\t;  ", new String[]{"<SEMICOLOM, ;>"}}, {"\n  \t ;  ", new String[]{"<SEMICOLOM, ;>"}},
-                {"  ; \n\t ; ", new String[]{"<SEMICOLOM, ;>", "<SEMICOLOM, ;>"}},
+                {"\t;  ", new String[]{"<SEMICOLON, ;>"}}, {"\n  \t ;  ", new String[]{"<SEMICOLON, ;>"}},
+                {"  ; \n\t ; ", new String[]{"<SEMICOLON, ;>", "<SEMICOLON, ;>"}},
                 // Test 5: Comments
                 {"  {}     ", new String[]{}}, {"  {}   {} \t  {}   {}   ", new String[]{}},
                 // Test 6: For loop
@@ -86,7 +86,7 @@ public class LexicalTest {
                                 "<PARENTHESES_OPEN, (>",
                                 "<ID, i>",
                                 "<PARENTHESES_CLOSE, )>",
-                                "<SEMICOLOM, ;>"
+                                "<SEMICOLON, ;>"
                         }
                 },
                 // Test 7: Simple program with error
@@ -97,12 +97,12 @@ public class LexicalTest {
                         new String[]{
                                 "<RESERVED_PROGRAM, program>",
                                 "<ID, lalg>",
-                                "<SEMICOLOM, ;>",
+                                "<SEMICOLON, ;>",
                                 "<RESERVED_VAR, var>",
                                 "<ID, a>",
-                                "<COLOM, :>",
+                                "<COLON, :>",
                                 "<RESERVED_INTEGER, integer>",
-                                "<SEMICOLOM, ;>",
+                                "<SEMICOLON, ;>",
                                 "<RESERVED_BEGIN, begin>",
                                 "<RESERVED_READ, read>",
                                 "<PARENTHESES_OPEN, (>",
@@ -111,7 +111,7 @@ public class LexicalTest {
                                 "<COMMA, ,>",
                                 "<INTEGER, 1>",
                                 "<PARENTHESES_CLOSE, )>",
-                                "<SEMICOLOM, ;>",
+                                "<SEMICOLON, ;>",
                                 "<RESERVED_END, end>",
                                 "<PERIOD, .>",
                                 "Error: unexpected character '@' at line 0 column 61"

@@ -12,19 +12,23 @@ import java.util.List;
 public class SyntaxAnalyzer {
 
     private LexicalAnalyzer lexic;
-    private List<Error> erros = new ArrayList<>();
+    private List<Error> errors = new ArrayList<>();
 
     public SyntaxAnalyzer(LexicalAnalyzer lexic) {
         this.lexic = lexic;
     }
 
     public void Analyze() {
-        RuleAnalyzer.initial(lexic, erros);
+        RuleAnalyzer.initial(lexic, errors);
 
-        erros.sort((e1, e2) -> e1.getLine() - e2.getLine() != 0 ? e1.getLine() - e2.getLine() : e1.getColumn() - e2.getColumn());
+        while (lexic.hasError()) {
+            errors.add(lexic.nextError());
+        }
+
+        errors.sort((e1, e2) -> e1.getLine() - e2.getLine() != 0 ? e1.getLine() - e2.getLine() : e1.getColumn() - e2.getColumn());
     }
 
     public Collection<Error> getErrors() {
-        return Collections.unmodifiableCollection(erros);
+        return Collections.unmodifiableCollection(errors);
     }
 }

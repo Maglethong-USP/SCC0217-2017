@@ -81,7 +81,7 @@ public final class LexicalAnalyzer {
      *
      * @return The next toke from input
      */
-    public Token peak() {
+    public Token peek() {
         if (!hasNext()) {
             throw new NullPointerException("Trying to read next token from end of file");
         }
