@@ -13,6 +13,9 @@ import compiler.util.Debug;
 
 import java.util.*;
 
+import static compiler.util.CollectionUtils.concat;
+import static compiler.syntatic.RuleType.*;
+
 /**
  * This class holds all LALG rules. For more information check LALG_grammar.pdf at projects root
  */
@@ -85,23 +88,19 @@ final class RuleAnalyzer {
         return false;
     }
 
-    @SafeVarargs
-    private static <T> Collection<T> concat(Collection<T> col, T... ts) {
-        Collection<T> ret = new ArrayList<>(col);
-        ret.addAll(Arrays.asList(ts));
-        return Collections.unmodifiableCollection(ret);
-    }
-
     private static void programa(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
 
         if (!isNextSymbol(RESERVED_PROGRAM, lexic)) {
-            errors.add(buildError(lexic, RESERVED_PROGRAM, concat(syncTokens, ID)));
+            Collection<TokenType> sync = concat(syncTokens, ID);
+            errors.add(buildError(lexic, RESERVED_PROGRAM, sync));
         }
         if (!isNextSymbol(ID, lexic)) {
-            errors.add(buildError(lexic, ID, concat(syncTokens, SEMICOLON)));
+            Collection<TokenType> sync = concat(syncTokens, SEMICOLON);
+            errors.add(buildError(lexic, ID, sync));
         }
         if (!isNextSymbol(SEMICOLON, lexic)) {
-            errors.add(buildError(lexic, SEMICOLON, concat(syncTokens, RESERVED_BEGIN))); // TODO -> concat with 1st(corpo)
+            Collection<TokenType> sync = concat(syncTokens, BODY.getFirst());
+            errors.add(buildError(lexic, SEMICOLON, sync));
         }
 
         corpo(lexic, errors, syncTokens);
@@ -110,7 +109,8 @@ final class RuleAnalyzer {
     private static void corpo(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
         dc(lexic, errors, concat(syncTokens, RESERVED_BEGIN));
         if (!isNextSymbol(RESERVED_BEGIN, lexic)) {
-            errors.add(buildError(lexic, RESERVED_BEGIN, concat(syncTokens))); // TODO -> concat with 1st(comandos)
+            Collection<TokenType> sync = concat(concat(syncTokens, COMMANDS.getFirst()), RESERVED_END);
+            errors.add(buildError(lexic, RESERVED_BEGIN, sync));
         }
         comandos(lexic, errors, concat(syncTokens, RESERVED_END));
         if (!isNextSymbol(RESERVED_END, lexic)) {
