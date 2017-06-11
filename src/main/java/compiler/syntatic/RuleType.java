@@ -13,46 +13,40 @@ import static compiler.util.CollectionUtils.concat;
  * @author Maglethong Spirr
  */
 public enum RuleType {
-    // TODO -> Follow
-    PROGRAM(Collections.singletonList(RESERVED_PROGRAM), null),
-    DC_C(Arrays.asList(RESERVED_CONST, null), null),
-    DC_V(Arrays.asList(RESERVED_VAR, null), null),
-    DC_P(Arrays.asList(RESERVED_PROCEDURE, null), null),
-    DC(concat(DC_C.first, DC_V.first, DC_P.first), null),
-    BODY(concat(DC.first, RESERVED_BEGIN), null),
-    TYPE_VAR(Arrays.asList(REAL, INTEGER), null),
-    VARIABLE(Collections.singletonList(ID), null),
-    MORE_VARIABLES(Arrays.asList(COMMA, null), null),
-    // TODO -> First & Follow
-    PARAMETER(Arrays.asList(), null),
-    LIST_PARAM(Arrays.asList(), null),
-    MORE_PARAM(Arrays.asList(), null),
-    BODY_P(Arrays.asList(), null),
-    DC_LOC(Arrays.asList(), null),
-    LIST_ARG(Arrays.asList(), null),
-    PFALSE(Arrays.asList(), null),
-    COMMANDS(Arrays.asList(), null),
-    CMD(Arrays.asList(), null),
-    CONDITION(Arrays.asList(), null),
-    RELATION(Arrays.asList(), null),
-    EXPRESSION(Arrays.asList(), null),
-    OP_UN(Arrays.asList(), null),
-    OTHER_TERMS(Arrays.asList(), null),
-    OP_ADD(Arrays.asList(), null),
-    TERM(Arrays.asList(), null),
-    MORE_FACTORS(Arrays.asList(), null),
-    OP_MUL(Arrays.asList(), null),
-    FACTOR(Arrays.asList(), null),
-    NUMBER(Arrays.asList(), null);
-
-
+    NUMBER(Arrays.asList(INTEGER, REAL)),
+    FACTOR(concat(NUMBER.first, ID, PARENTHESES_OPEN)),
+    OP_MUL(Arrays.asList(MULTIPLY, DIVIDE)),
+    MORE_FACTORS(concat(OP_MUL.first, (TokenType) null)),
+    OP_ADD(Arrays.asList(ADD, SUBTRACT)),
+    OTHER_TERMS(concat(OP_ADD.first, (TokenType) null)),
+    OP_UN(Arrays.asList(ADD, SUBTRACT, null)),
+    TERM(OP_UN.first),
+    EXPRESSION(TERM.first),
+    RELATION(Arrays.asList(EQUAL, DIFFERENT, GRATER, GRATER_EQUAL, LESS, LESS_EQUAL)),
+    CONDITION(EXPRESSION.first),
+    CMD(Arrays.asList(RESERVED_READ, RESERVED_WRITE, RESERVED_WHILE, RESERVED_IF, ID, RESERVED_BEGIN)),
+    COMMANDS(concat(CMD.first, (TokenType) null)),
+    PROGRAM(Collections.singletonList(RESERVED_PROGRAM)),
+    DC_C(Arrays.asList(RESERVED_CONST, null)),
+    DC_V(Arrays.asList(RESERVED_VAR, null)),
+    DC_P(Arrays.asList(RESERVED_PROCEDURE, null)),
+    DC(concat(DC_C.first, DC_V.first, DC_P.first)),
+    BODY(concat(DC.first, RESERVED_BEGIN)),
+    TYPE_VAR(Arrays.asList(REAL, INTEGER)),
+    VARIABLES(Collections.singletonList(ID)),
+    MORE_VARIABLES(Arrays.asList(COMMA, null)),
+    PARAMETER(Arrays.asList(PARENTHESES_OPEN, null)),
+    LIST_PARAM(VARIABLES.first),
+    MORE_PARAM(Arrays.asList(SEMICOLON, null)),
+    DC_LOC(DC_V.first),
+    BODY_P(DC_LOC.first),
+    LIST_ARG(Arrays.asList(PARENTHESES_OPEN, null)),
+    PFALSE(Arrays.asList(RESERVED_ELSE, null));
 
     private final Set<TokenType> first;
-    private final Set<TokenType> follow;
 
-    RuleType(Collection<TokenType> first, Collection<TokenType> follow) {
+    RuleType(Collection<TokenType> first) {
         this.first = new HashSet<>(first);
-        this.follow = null; // new HashSet<>(follow);
     }
 
     public Set<TokenType> getFirst() {

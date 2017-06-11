@@ -90,6 +90,7 @@ final class RuleAnalyzer {
     }
 
     private static void programa(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 1);
 
         if (!isNextSymbol(RESERVED_PROGRAM, lexic)) {
             Collection<TokenType> sync = concat(syncTokens, ID);
@@ -108,6 +109,8 @@ final class RuleAnalyzer {
     }
 
     private static void corpo(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 2);
+
         dc(lexic, errors, concat(syncTokens, RESERVED_BEGIN));
         if (!isNextSymbol(RESERVED_BEGIN, lexic)) {
             Collection<TokenType> sync = concat(concat(syncTokens, COMMANDS.getFirst()), RESERVED_END);
@@ -120,12 +123,16 @@ final class RuleAnalyzer {
     }
 
     private static void dc(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 3);
+
         dc_c(lexic, errors, concat(syncTokens, DC_V.getFirst()));
         dc_v(lexic, errors, concat(syncTokens, DC_P.getFirst()));
         dc_p(lexic, errors, syncTokens);
     }
 
     private static void dc_c(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 4);
+
         if (!isNextSymbol(RESERVED_CONST, lexic)) {
             return;
         }
@@ -146,6 +153,8 @@ final class RuleAnalyzer {
     }
 
     private static void dc_v(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 5);
+
         if (!isNextSymbol(RESERVED_VAR, lexic)) {
             return;
         }
@@ -163,12 +172,16 @@ final class RuleAnalyzer {
     }
 
     private static void tipo_var(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 6);
+
         if (!isNextSymbol(RESERVED_INTEGER, lexic) && !isNextSymbol(RESERVED_REAL, lexic)) {
             errors.add(buildError(lexic, RESERVED_REAL, syncTokens));
         }
     }
 
     private static void variaveis(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 7);
+
         if (!isNextSymbol(ID, lexic)) {
             Collection<TokenType> sync = concat(syncTokens, MORE_VARIABLES.getFirst());
             errors.add(buildError(lexic, ID, sync));
@@ -177,6 +190,8 @@ final class RuleAnalyzer {
     }
 
     private static void mais_var(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 8);
+
         if (!isNextSymbol(COMMA, lexic)) {
             return;
         }
@@ -184,6 +199,8 @@ final class RuleAnalyzer {
     }
 
     private static void dc_p(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 9);
+
         if (!isNextSymbol(RESERVED_PROCEDURE, lexic)) {
             return;
         }
@@ -201,6 +218,8 @@ final class RuleAnalyzer {
     }
 
     private static void parametros(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 10);
+
         if (!isNextSymbol(PARENTHESES_OPEN, lexic)) {
             return;
         }
@@ -211,6 +230,8 @@ final class RuleAnalyzer {
     }
 
     private static void lista_par(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 11);
+
         variaveis(lexic, errors, concat(syncTokens, COLON));
         if (!isNextSymbol(COLON, lexic)) {
             Collection<TokenType> sync = concat(syncTokens, TYPE_VAR.getFirst());
@@ -221,6 +242,8 @@ final class RuleAnalyzer {
     }
 
     private static void mais_par(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 12);
+
         if (!isNextSymbol(COMMA, lexic)) {
             return;
         }
@@ -228,6 +251,8 @@ final class RuleAnalyzer {
     }
 
     private static void corpo_p(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 13);
+
         dc_loc(lexic, errors, concat(syncTokens, RESERVED_BEGIN));
         if (!isNextSymbol(RESERVED_BEGIN, lexic)) {
             Collection<TokenType> sync = concat(syncTokens, COMMANDS.getFirst());
@@ -244,58 +269,244 @@ final class RuleAnalyzer {
     }
 
     private static void dc_loc(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 14);
+
+        dc_v(lexic, errors, syncTokens);
     }
 
     private static void lista_arg(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 15);
+
+        if (!isNextSymbol(PARENTHESES_OPEN, lexic)) {
+            return;
+        }
+        argumentos(lexic, errors, concat(syncTokens, PARENTHESES_CLOSE));
+        if (!isNextSymbol(PARENTHESES_CLOSE, lexic)) {
+            errors.add(buildError(lexic, PARENTHESES_CLOSE, syncTokens));
+        }
     }
 
     private static void argumentos(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 16);
+
+        if (!isNextSymbol(ID, lexic)) {
+            Collection<TokenType> sync = concat(syncTokens, MORE_PARAM.getFirst());
+            errors.add(buildError(lexic, ID, sync));
+        }
+        mais_ident(lexic, errors, syncTokens);
     }
 
     private static void mais_ident(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 17);
+
+        if (!isNextSymbol(SEMICOLON, lexic)) {
+            return;
+        }
+        argumentos(lexic, errors, syncTokens);
     }
 
     private static void pfalsa(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 18);
+
+        if (!isNextSymbol(RESERVED_ELSE, lexic)) {
+            return;
+        }
+        cmd(lexic, errors, syncTokens);
     }
 
     private static void comandos(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 19);
 
+        if (!lexic.hasNext() || !CMD.getFirst().contains(lexic.peek().getType())) {
+            return;
+        }
+        cmd(lexic, errors, concat(syncTokens, SEMICOLON));
+        if (!isNextSymbol(SEMICOLON, lexic)) {
+            Collection<TokenType> sync = concat(syncTokens, COMMANDS.getFirst());
+            errors.add(buildError(lexic, SEMICOLON, sync));
+        }
+        comandos(lexic, errors, syncTokens);
     }
 
     private static void cmd(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 20);
+
+        if (!lexic.hasNext()) {
+            errors.add(buildError(lexic, ID, syncTokens));
+        }
+
+        switch (lexic.peek().getType()) {
+            case RESERVED_READ:
+            case RESERVED_WRITE:
+                Debug.log("[DEBUG] Consuming " + lexic.peek());
+                lexic.next();
+                if (!isNextSymbol(PARENTHESES_OPEN, lexic)) {
+                    Collection<TokenType> sync = concat(syncTokens, VARIABLES.getFirst());
+                    errors.add(buildError(lexic, PARENTHESES_OPEN, sync));
+                }
+                variaveis(lexic, errors, concat(syncTokens, PARENTHESES_CLOSE));
+                if (!isNextSymbol(PARENTHESES_CLOSE, lexic)) {
+                    errors.add(buildError(lexic, PARENTHESES_CLOSE, syncTokens));
+                }
+                break;
+
+            case RESERVED_WHILE:
+                Debug.log("[DEBUG] Consuming " + lexic.peek());
+                lexic.next();
+                if (!isNextSymbol(PARENTHESES_OPEN, lexic)) {
+                    Collection<TokenType> sync = concat(syncTokens, VARIABLES.getFirst());
+                    errors.add(buildError(lexic, PARENTHESES_OPEN, sync));
+                }
+                condicao(lexic, errors, concat(syncTokens, PARENTHESES_CLOSE));
+                if (!isNextSymbol(PARENTHESES_CLOSE, lexic)) {
+                    Collection<TokenType> sync = concat(syncTokens, RESERVED_DO);
+                    errors.add(buildError(lexic, PARENTHESES_CLOSE, sync));
+                }
+                if (!isNextSymbol(RESERVED_DO, lexic)) {
+                    Collection<TokenType> sync = concat(syncTokens, CMD.getFirst());
+                    errors.add(buildError(lexic, RESERVED_DO, sync));
+                }
+                cmd(lexic, errors, syncTokens);
+                break;
+
+            case RESERVED_IF:
+                Debug.log("[DEBUG] Consuming " + lexic.peek());
+                lexic.next();
+                condicao(lexic, errors, concat(syncTokens, RESERVED_THEN));
+                if (!isNextSymbol(RESERVED_THEN, lexic)) {
+                    Collection<TokenType> sync = concat(syncTokens, CMD.getFirst());
+                    errors.add(buildError(lexic, RESERVED_THEN, sync));
+                }
+                cmd(lexic, errors, concat(syncTokens, PFALSE.getFirst()));
+                pfalsa(lexic, errors, syncTokens);
+                break;
+
+            case ID:
+                Debug.log("[DEBUG] Consuming " + lexic.peek());
+                lexic.next();
+                if (isNextSymbol(ATTRIBUTION, lexic)) {
+                    expressao(lexic, errors, syncTokens);
+                } else {
+                    lista_arg(lexic, errors, syncTokens);
+                }
+                break;
+
+            case RESERVED_BEGIN:
+                Debug.log("[DEBUG] Consuming " + lexic.peek());
+                lexic.next();
+                comandos(lexic, errors, concat(syncTokens, RESERVED_END));
+                if (!isNextSymbol(RESERVED_END, lexic)) {
+                    errors.add(buildError(lexic, RESERVED_END, syncTokens));
+                }
+                break;
+
+            default:
+                errors.add(buildError(lexic, ID, syncTokens));
+                break;
+        }
     }
 
     private static void condicao(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 21);
+
+        expressao(lexic, errors, concat(syncTokens, RELATION.getFirst()));
+        relacao(lexic, errors, concat(syncTokens, EXPRESSION.getFirst()));
+        expressao(lexic, errors, syncTokens);
     }
 
     private static void relacao(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 22);
+
+        if (!isNextSymbol(EQUAL, lexic) && !isNextSymbol(DIFFERENT, lexic)
+                && !isNextSymbol(GRATER_EQUAL, lexic) && !isNextSymbol(GRATER, lexic)
+                && !isNextSymbol(LESS, lexic) && !isNextSymbol(LESS_EQUAL, lexic)) {
+            errors.add(buildError(lexic, EQUAL, syncTokens));
+        }
     }
 
     private static void expressao(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 23);
+
+        termo(lexic, errors, concat(syncTokens, OTHER_TERMS.getFirst()));
+        outros_termos(lexic, errors, syncTokens);
     }
 
     private static void op_un(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 24);
+
+        boolean b = isNextSymbol(ADD, lexic) || isNextSymbol(SUBTRACT, lexic);
     }
 
     private static void outros_termos(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 25);
+
+        if (!lexic.hasNext() || !OP_ADD.getFirst().contains(lexic.peek().getType())) {
+            return;
+        }
+
+        op_ad(lexic, errors, concat(syncTokens, TERM.getFirst()));
+        termo(lexic, errors, concat(syncTokens, OTHER_TERMS.getFirst()));
+        outros_termos(lexic, errors, syncTokens);
     }
 
     private static void op_ad(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 26);
+
+        if (!isNextSymbol(ADD, lexic) && !isNextSymbol(SUBTRACT, lexic)) {
+            errors.add(buildError(lexic, ADD, syncTokens));
+        }
     }
 
     private static void termo(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 27);
+
+        op_un(lexic, errors, concat(syncTokens, FACTOR.getFirst()));
+        fator(lexic, errors, concat(syncTokens, MORE_FACTORS.getFirst()));
+        mais_fatores(lexic, errors, syncTokens);
     }
 
     private static void mais_fatores(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 28);
+
+        if (!lexic.hasNext() || !OP_MUL.getFirst().contains(lexic.peek().getType())) {
+            return;
+        }
+
+        op_mul(lexic, errors, concat(syncTokens, FACTOR.getFirst()));
+        fator(lexic, errors, concat(syncTokens, MORE_FACTORS.getFirst()));
+        mais_fatores(lexic, errors, syncTokens);
     }
 
     private static void op_mul(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 29);
+
+        if (!isNextSymbol(MULTIPLY, lexic) && !isNextSymbol(DIVIDE, lexic)) {
+            errors.add(buildError(lexic, MULTIPLY, syncTokens));
+        }
     }
 
     private static void fator(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 30);
+
+        if (lexic.hasNext() && (NUMBER.getFirst().contains(lexic.peek().getType()) || lexic.peek().getType() == ID))  {
+            Debug.log("[DEBUG] Consuming " + lexic.peek());
+            lexic.next();
+            return;
+        }
+
+        if (!isNextSymbol(PARENTHESES_OPEN, lexic)) {
+            Collection<TokenType> sync = concat(syncTokens, EXPRESSION.getFirst());
+            errors.add(buildError(lexic, PARENTHESES_OPEN, sync));
+        }
+        expressao(lexic, errors, concat(syncTokens, PARENTHESES_CLOSE));
+        if (!isNextSymbol(PARENTHESES_CLOSE, lexic)) {
+            errors.add(buildError(lexic, PARENTHESES_CLOSE, syncTokens));
+        }
     }
 
     private static void numero(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        Debug.log("[DEBUG] Entering rule #" + 31);
+
         if (!isNextSymbol(INTEGER, lexic) && !isNextSymbol(REAL, lexic)) {
             errors.add(buildError(lexic, REAL, syncTokens));
         }
