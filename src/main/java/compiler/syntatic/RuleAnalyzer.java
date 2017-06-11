@@ -21,7 +21,8 @@ import static compiler.syntatic.RuleType.*;
  */
 final class RuleAnalyzer {
 
-    private RuleAnalyzer() {}
+    private RuleAnalyzer() {
+    }
 
     static void initial(LexicalAnalyzer lexic, Collection<Error> errors) {
         try {
@@ -119,91 +120,184 @@ final class RuleAnalyzer {
     }
 
     private static void dc(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
-
+        dc_c(lexic, errors, concat(syncTokens, DC_V.getFirst()));
+        dc_v(lexic, errors, concat(syncTokens, DC_P.getFirst()));
+        dc_p(lexic, errors, syncTokens);
     }
 
-    private static void dc_c() {
+    private static void dc_c(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        if (!isNextSymbol(RESERVED_CONST, lexic)) {
+            return;
+        }
+        if (!isNextSymbol(ID, lexic)) {
+            Collection<TokenType> sync = concat(syncTokens, EQUAL);
+            errors.add(buildError(lexic, ID, sync));
+        }
+        if (!isNextSymbol(EQUAL, lexic)) {
+            Collection<TokenType> sync = concat(syncTokens, NUMBER.getFirst());
+            errors.add(buildError(lexic, EQUAL, sync));
+        }
+        numero(lexic, errors, concat(syncTokens, SEMICOLON));
+        if (!isNextSymbol(SEMICOLON, lexic)) {
+            Collection<TokenType> sync = concat(syncTokens, DC_C.getFirst());
+            errors.add(buildError(lexic, SEMICOLON, sync));
+        }
+        dc_c(lexic, errors, syncTokens);
     }
 
-    private static void dc_v() {
+    private static void dc_v(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        if (!isNextSymbol(RESERVED_VAR, lexic)) {
+            return;
+        }
+        variaveis(lexic, errors, concat(syncTokens, COLON));
+        if (!isNextSymbol(COLON, lexic)) {
+            Collection<TokenType> sync = concat(syncTokens, TYPE_VAR.getFirst());
+            errors.add(buildError(lexic, COLON, sync));
+        }
+        tipo_var(lexic, errors, concat(syncTokens, SEMICOLON));
+        if (!isNextSymbol(SEMICOLON, lexic)) {
+            Collection<TokenType> sync = concat(syncTokens, DC_V.getFirst());
+            errors.add(buildError(lexic, SEMICOLON, sync));
+        }
+        dc_v(lexic, errors, syncTokens);
     }
 
-    private static void tipo_var() {
+    private static void tipo_var(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        if (!isNextSymbol(RESERVED_INTEGER, lexic) && !isNextSymbol(RESERVED_REAL, lexic)) {
+            errors.add(buildError(lexic, RESERVED_REAL, syncTokens));
+        }
     }
 
-    private static void variaveis() {
+    private static void variaveis(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        if (!isNextSymbol(ID, lexic)) {
+            Collection<TokenType> sync = concat(syncTokens, MORE_VARIABLES.getFirst());
+            errors.add(buildError(lexic, ID, sync));
+        }
+        mais_var(lexic, errors, syncTokens);
     }
 
-    private static void mais_var() {
+    private static void mais_var(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        if (!isNextSymbol(COMMA, lexic)) {
+            return;
+        }
+        variaveis(lexic, errors, syncTokens);
     }
 
-    private static void dc_p() {
+    private static void dc_p(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        if (!isNextSymbol(RESERVED_PROCEDURE, lexic)) {
+            return;
+        }
+        if (!isNextSymbol(ID, lexic)) {
+            Collection<TokenType> sync = concat(syncTokens, PARAMETER.getFirst());
+            errors.add(buildError(lexic, ID, sync));
+        }
+        parametros(lexic, errors, concat(syncTokens, SEMICOLON));
+        if (!isNextSymbol(SEMICOLON, lexic)) {
+            Collection<TokenType> sync = concat(syncTokens, BODY_P.getFirst());
+            errors.add(buildError(lexic, SEMICOLON, sync));
+        }
+        corpo_p(lexic, errors, concat(syncTokens, DC_P.getFirst()));
+        dc_p(lexic, errors, syncTokens);
     }
 
-    private static void parametros() {
+    private static void parametros(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        if (!isNextSymbol(PARENTHESES_OPEN, lexic)) {
+            return;
+        }
+        lista_par(lexic, errors, concat(syncTokens, PARENTHESES_CLOSE));
+        if (!isNextSymbol(PARENTHESES_CLOSE, lexic)) {
+            errors.add(buildError(lexic, PARENTHESES_CLOSE, syncTokens));
+        }
     }
 
-    private static void lista_par() {
+    private static void lista_par(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        variaveis(lexic, errors, concat(syncTokens, COLON));
+        if (!isNextSymbol(COLON, lexic)) {
+            Collection<TokenType> sync = concat(syncTokens, TYPE_VAR.getFirst());
+            errors.add(buildError(lexic, COLON, sync));
+        }
+        tipo_var(lexic, errors, concat(syncTokens, MORE_VARIABLES.getFirst()));
+        mais_par(lexic, errors, syncTokens);
     }
 
-    private static void mais_par() {
+    private static void mais_par(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        if (!isNextSymbol(COMMA, lexic)) {
+            return;
+        }
+        lista_par(lexic, errors, syncTokens);
     }
 
-    private static void corpo_p() {
+    private static void corpo_p(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        dc_loc(lexic, errors, concat(syncTokens, RESERVED_BEGIN));
+        if (!isNextSymbol(RESERVED_BEGIN, lexic)) {
+            Collection<TokenType> sync = concat(syncTokens, COMMANDS.getFirst());
+            errors.add(buildError(lexic, RESERVED_BEGIN, sync));
+        }
+        comandos(lexic, errors, concat(syncTokens, RESERVED_END));
+        if (!isNextSymbol(RESERVED_END, lexic)) {
+            Collection<TokenType> sync = concat(syncTokens, SEMICOLON);
+            errors.add(buildError(lexic, RESERVED_END, sync));
+        }
+        if (!isNextSymbol(SEMICOLON, lexic)) {
+            errors.add(buildError(lexic, SEMICOLON, syncTokens));
+        }
     }
 
-    private static void dc_loc() {
+    private static void dc_loc(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
     }
 
-    private static void lista_arg() {
+    private static void lista_arg(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
     }
 
-    private static void argumentos() {
+    private static void argumentos(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
     }
 
-    private static void mais_ident() {
+    private static void mais_ident(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
     }
 
-    private static void pfalsa() {
+    private static void pfalsa(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
     }
 
     private static void comandos(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
 
     }
 
-    private static void cmd() {
+    private static void cmd(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
     }
 
-    private static void condicao() {
+    private static void condicao(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
     }
 
-    private static void relacao() {
+    private static void relacao(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
     }
 
-    private static void expressao() {
+    private static void expressao(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
     }
 
-    private static void op_un() {
+    private static void op_un(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
     }
 
-    private static void outros_termos() {
+    private static void outros_termos(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
     }
 
-    private static void op_ad() {
+    private static void op_ad(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
     }
 
-    private static void termo() {
+    private static void termo(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
     }
 
-    private static void mais_fatores() {
+    private static void mais_fatores(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
     }
 
-    private static void op_mul() {
+    private static void op_mul(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
     }
 
-    private static void fator() {
+    private static void fator(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
     }
 
-    private static void numero() {
+    private static void numero(LexicalAnalyzer lexic, Collection<Error> errors, Collection<TokenType> syncTokens) {
+        if (!isNextSymbol(INTEGER, lexic) && !isNextSymbol(REAL, lexic)) {
+            errors.add(buildError(lexic, REAL, syncTokens));
+        }
     }
 }
