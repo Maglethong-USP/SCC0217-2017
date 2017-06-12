@@ -1,13 +1,11 @@
 package compiler.error;
 
-import compiler.base.IElement;
-
 
 
 /**
  * Author: Maglethong Spirr
  */
-public final class Error implements IElement {
+public final class Error {
     private final int line;
     private final int column;
     private final ErrorType type;

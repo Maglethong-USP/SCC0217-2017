@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 
 
-
 /**
  * Author: Maglethong Spirr
  */
@@ -15,13 +14,13 @@ public enum TokenType {
     REAL("(\\+|-)?[0-9]+\\.[0-9]+"),
     INTEGER("(\\+|-)?[1-9][0-9]*"),
     // Symbols
-    SEMICOLOM(";"),
-    BRAQUETS_OPEN("\\{"),
-    BRAQUETS_CLOSE("\\}"),
+    SEMICOLON(";"),
+    BRACKETS_OPEN("\\{"),
+    BRACKETS_CLOSE("\\}"),
     PARENTHESES_OPEN("\\("),
     PARENTHESES_CLOSE("\\)"),
     ATTRIBUTION(":="),
-    COLOM(":"),
+    COLON(":"),
     PERIOD("\\."),
     COMMA(","),
     EQUAL("="),

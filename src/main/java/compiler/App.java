@@ -3,7 +3,7 @@ package compiler;
 import java.util.Scanner;
 
 import compiler.lexic.LexicalAnalyzer;
-
+import compiler.syntatic.SyntaxAnalyzer;
 
 
 /**
@@ -13,14 +13,11 @@ public class App {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        LexicalAnalyzer analyser = new LexicalAnalyzer(scanner);
+        SyntaxAnalyzer syntax = new SyntaxAnalyzer(new LexicalAnalyzer(scanner));
 
-        while (analyser.hasNext()) {
-            System.out.println(analyser.next().toString());
-            if (scanner.hasNext("\\\\q")) {
-                break;
-            }
-        }
+        syntax.Analyze();
+
+        syntax.getErrors().forEach((e) -> System.out.println(e));
 
         scanner.close();
     }
